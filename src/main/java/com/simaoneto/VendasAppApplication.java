@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class VendasAppApplication {
 
-    @Autowired
-    @Qualifier("applicationNameFromBean")
-    private String applicationNameFromBean;
+    /*
+        @Autowired
+        @Qualifier("applicationNameFromBean")
+        private String applicationNameFromBean;
+     */
 
     @Value("${application.name}")
     private String applicationNameFromProperties;
