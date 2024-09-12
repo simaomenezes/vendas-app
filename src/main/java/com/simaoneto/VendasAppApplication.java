@@ -1,7 +1,8 @@
 package com.simaoneto;
 
 import com.simaoneto.domain.entity.Cliente;
-import com.simaoneto.repository.Clientes;
+
+import com.simaoneto.domain.repository.Clientes;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -22,30 +23,30 @@ public class VendasAppApplication {
     public CommandLineRunner init(@Autowired Clientes clientes){
         return args -> {
             System.out.println("Salvando clientes");
-            clientes.salvar(new Cliente("Menezes"));
-            clientes.salvar(new Cliente("Outro Neto"));
+            clientes.save(new Cliente("Menezes"));
+            clientes.save(new Cliente("Outro Neto"));
 
-            List<Cliente> todosClientes = clientes.getAll();
+            List<Cliente> todosClientes = clientes.findAll();
             todosClientes.forEach(System.out::println);
 
             System.out.println("Atualizando clientes");
             todosClientes.forEach(c -> {
                 c.setNome(c.getNome() + " atualizado.");
-                clientes.atualizar(c);
+                clientes.save(c);
             });
 
-            todosClientes = clientes.getAll();
+            todosClientes = clientes.findAll();
             todosClientes.forEach(System.out::println);
 
             System.out.println("Buscando clientes");
-            clientes.buscarPorNome("Cli").forEach(System.out::println);
+            clientes.findByNomeLike("Cli").forEach(System.out::println);
 
             System.out.println("deletando clientes");
-            clientes.getAll().forEach(c -> {
-                clientes.deletar(c);
+            clientes.findAll().forEach(c -> {
+                clientes.delete(c);
             });
 
-            todosClientes = clientes.getAll();
+            todosClientes = clientes.findAll();
             if(todosClientes.isEmpty()){
                 System.out.println("Nenhum cliente encontrado.");
             }else{
