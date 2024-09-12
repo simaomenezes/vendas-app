@@ -1,11 +1,25 @@
 package com.simaoneto.domain.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 
+
+@Entity
+@Table(name = "Produto")
 public class Produto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Integer id;
+
+    @Column(name = "descricao", length = 100)
     private String descricao;
+
+    @Column(name = "preco_unitario")
     private BigDecimal preco;
+
+    public Produto() {
+    }
 
     public Integer getId() {
         return id;

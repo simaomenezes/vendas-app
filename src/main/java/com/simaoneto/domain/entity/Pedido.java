@@ -1,13 +1,32 @@
 package com.simaoneto.domain.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
+@Entity
+@Table(name = "Pedido")
 public class Pedido {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+
+    @Column(name = "data_pedido")
     private LocalDate dataPedido;
+
+    @Column(name = "total", length = 20, precision = 2)
     private BigDecimal total;
+
+    @OneToMany(mappedBy = "pedido")
+    private List<Pedido> pedidos;
+
 
     public Integer getId() {
         return id;
@@ -39,5 +58,13 @@ public class Pedido {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
     }
 }
