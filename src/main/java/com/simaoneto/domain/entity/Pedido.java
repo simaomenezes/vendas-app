@@ -25,7 +25,7 @@ public class Pedido {
     private BigDecimal total;
 
     @OneToMany(mappedBy = "pedido")
-    private List<Pedido> pedidos;
+    private List<ItemPedido> itens;
 
 
     public Integer getId() {
@@ -60,11 +60,11 @@ public class Pedido {
         this.total = total;
     }
 
-    public List<Pedido> getPedidos() {
-        return pedidos;
+    public List<ItemPedido> getItens() {
+        return itens;
     }
 
-    public void setPedidos(List<Pedido> pedidos) {
-        this.pedidos = pedidos;
+    public void setItens(List<ItemPedido> itens) {
+        this.itens = itens;
     }
 }
