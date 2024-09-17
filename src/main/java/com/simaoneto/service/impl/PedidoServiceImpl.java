@@ -4,33 +4,41 @@ import com.simaoneto.domain.entity.Cliente;
 import com.simaoneto.domain.entity.ItemPedido;
 import com.simaoneto.domain.entity.Pedido;
 import com.simaoneto.domain.entity.Produto;
+import com.simaoneto.domain.enums.StatusPedido;
 import com.simaoneto.domain.repository.Clientes;
 import com.simaoneto.domain.repository.ItemPedidos;
 import com.simaoneto.domain.repository.Pedidos;
 import com.simaoneto.domain.repository.Produtos;
+import com.simaoneto.exception.PedidoNaoEncontradoException;
 import com.simaoneto.exception.RegraNegocioException;
 import com.simaoneto.res.dto.ItemPedidoDTO;
 import com.simaoneto.res.dto.PedidoDTO;
 import com.simaoneto.service.PedidoService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PedidoServiceImpl implements PedidoService {
 
+    @Autowired
     private Pedidos repositoryPedidos;
+    @Autowired
     private Clientes repositoryClientes;
+    @Autowired
     private Produtos repositoryProdutos;
+    @Autowired
     private ItemPedidos repositoryItemsPedidos;
 
-    public PedidoServiceImpl(Pedidos repositoryPedidos) {
-        this.repositoryPedidos = repositoryPedidos;
-    }
-
     @Override
+    @Transactional
     public Pedido salvar(PedidoDTO pedidoDTO) {
         Integer idCliente = pedidoDTO.getCliente();
         Cliente cliente = repositoryClientes.findById(idCliente).orElseThrow(() -> new RegraNegocioException("Código de cliente inválido"));
@@ -46,6 +54,20 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setItens(itemPedidoList);
 
         return pedido;
+    }
+
+    @Override
+    public Optional<Pedido> obterPedidoCompleto(Integer id) {
+        return repositoryPedidos.findByIdFetchItens(id);
+    }
+
+    @Override
+    public void atualizaStatus(Integer id, StatusPedido statusPedido) {
+        repositoryPedidos.findById(id)
+                .map(p -> {
+                   p.setStatus(statusPedido);
+                   return repositoryPedidos.save(p);
+                }).orElseThrow(PedidoNaoEncontradoException::new);
     }
 
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> itemPedidoDTOS) {
