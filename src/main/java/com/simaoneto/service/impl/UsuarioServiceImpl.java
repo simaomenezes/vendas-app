@@ -2,6 +2,7 @@ package com.simaoneto.service.impl;
 
 import com.simaoneto.domain.entity.Usuario;
 import com.simaoneto.domain.repository.Usuarios;
+import com.simaoneto.exception.SenhaInvalidaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,5 +36,15 @@ public class UsuarioServiceImpl implements UserDetailsService {
     @Transactional
     public Usuario salvar(Usuario usuario) {
         return usuarios.save(usuario);
+    }
+
+    public UserDetails autenticar(Usuario usuario){
+        UserDetails userFromBD = loadUserByUsername(usuario.getLogin());
+        boolean passwordOK = passwordEncoder.matches(usuario.getSenha(), userFromBD.getPassword());
+        if (passwordOK){
+            return userFromBD;
+        }
+        throw new SenhaInvalidaException("Senha inválida");
+
     }
 }
