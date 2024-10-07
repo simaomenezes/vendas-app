@@ -32,7 +32,7 @@ public class JwtService {
 
         return Jwts.builder().setSubject(usuario.getLogin())
                 .setExpiration(date)
-                .signWith(SignatureAlgorithm.ES512, chaveassinatura)
+                .signWith(SignatureAlgorithm.HS512, chaveassinatura)
                 .compact();
     }
 
