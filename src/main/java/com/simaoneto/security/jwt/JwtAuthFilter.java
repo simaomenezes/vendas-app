@@ -33,7 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse httpServletResponse,
             FilterChain filterChain) throws ServletException, IOException {
 
-        String authorization = httpServletRequest.getHeader("authorization");
+        String authorization = httpServletRequest.getHeader("Authorization");
 
         if(authorization != null && authorization.startsWith("Bearer")){
             String tokenFromReq = authorization.split(" ")[1];
@@ -49,8 +49,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-
         filterChain.doFilter(httpServletRequest, httpServletResponse);
-
     }
 }
