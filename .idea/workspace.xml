@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="08ebdb1d-f4ea-4c3e-94a9-5010e9862498" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/remote-targets.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-    </list>
+    <list default="true" id="08ebdb1d-f4ea-4c3e-94a9-5010e9862498" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,7 +13,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="section-8" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -51,7 +48,6 @@
     "Application.VendasAppApplication.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "dev",
     "kotlin-language-version-configured": "true",
     "project.structure.last.edited": "SDKs",
     "project.structure.proportion": "0.15",
