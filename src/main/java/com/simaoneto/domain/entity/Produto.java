@@ -25,6 +25,6 @@ public class Produto {
     private String descricao;
 
     @Column(name = "preco_unitario")
-    @NotEmpty(message = "{campo.preco.obrigatorio}")
+    @NotNull(message = "{campo.preco.obrigatorio}")
     private BigDecimal preco;
 }
