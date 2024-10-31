@@ -3,6 +3,7 @@ package io.github.simaomenezes.libraryapi.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Table(name = "author", schema = "public")
 @Getter
 @Setter
+@ToString
 public class Author {
     @Id
     @Column(name = "id")
@@ -27,6 +29,7 @@ public class Author {
     @Column(name = "nationality", length = 50, nullable = false)
     private String nationality;
 
-    @OneToMany(mappedBy = "author")
+    //@OneToMany(mappedBy = "author")
+    @Transient
     private List<Book> books;
 }
