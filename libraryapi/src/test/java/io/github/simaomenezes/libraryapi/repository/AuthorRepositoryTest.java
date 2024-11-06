@@ -29,7 +29,7 @@ public class AuthorRepositoryTest {
 
     @Test
     public void updateById(){
-        var id = UUID.fromString("95612138-7789-481b-ba39-5e7040c7cfbb");
+        var id = UUID.fromString("92b39bb3-4145-4a74-8e0a-5cfa87baded8");
         Optional<Author> authorFound = repository.findById(id);
         if(authorFound.isPresent()){
             System.out.println("Author found: " + authorFound.get().getName());
@@ -43,5 +43,23 @@ public class AuthorRepositoryTest {
     public void getAllTest(){
         List<Author> authorList = repository.findAll();
         authorList.forEach(System.out::println);
+    }
+
+    @Test
+    public void deleteByIdTest(){
+        var id = UUID.fromString("5caf49b0-987b-4b1b-96df-55a3658a981c");
+        repository.deleteById(id);
+    }
+
+    @Test
+    public void deleteTest(){
+        var id = UUID.fromString("92b39bb3-4145-4a74-8e0a-5cfa87baded8");
+        var author = repository.findById(id).get();
+        repository.delete(author);
+    }
+
+    @Test
+    public void countTest(){
+        System.out.println("Count of authores: " + repository.count());
     }
 }
