@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 
 @SpringBootTest
@@ -51,5 +52,48 @@ public class BookRepositoryTest {
         book.setAuthor(author);
 
         repository.save(book);
+    }
+
+    @Test
+    public void addBookAndAuthorWithCascadeTest(){
+        Book book = new Book();
+        book.setIsbn("98598-51654");
+        book.setGender(BookGender.FICTION);
+        book.setPrice(BigDecimal.valueOf(25));
+        book.setTitle("War Of Read");
+        book.setDatePublished(LocalDate.of(1855, 1, 3));
+
+        Author author = new Author();
+        author.setName("Dunga Lima");
+        author.setNationality("He-man");
+        author.setDateBirthday(LocalDate.of(1985, 2, 3));
+        author.setNationality("USA");
+        book.setAuthor(author);
+        repository.save(book);
+    }
+
+    @Test
+    public void updateAuthorOfBookTest(){
+        UUID bookId = UUID.fromString("12080043-83ec-4d1e-82ed-e4dc9e3c4b67");
+        Book bookFound = repository.findById(bookId).orElse(null);
+
+        UUID id = UUID.fromString("e0e6463b-74bd-472e-a416-0ef7d8c47517");
+        Author authorFound = authorRepository.findById(id).orElse(null);
+        authorFound.setName("Ricardo Lima");
+        bookFound.setAuthor(authorFound);
+        repository.save(bookFound);
+
+    }
+
+    @Test
+    public void deleteTest(){
+        UUID bookId = UUID.fromString("12080043-83ec-4d1e-82ed-e4dc9e3c4b67");
+        repository.deleteById(bookId);
+    }
+
+    @Test
+    public void deleteWithCascadeTest(){
+        UUID id = UUID.fromString("54825c3d-a194-426c-85f2-9d07ad526f94");
+        repository.deleteById(id);
     }
 }
