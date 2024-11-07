@@ -2,11 +2,15 @@ package io.github.simaomenezes.libraryapi.repository;
 
 import io.github.simaomenezes.libraryapi.model.Author;
 
+import io.github.simaomenezes.libraryapi.model.Book;
+import io.github.simaomenezes.libraryapi.model.BookGender;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,6 +20,9 @@ public class AuthorRepositoryTest {
 
     @Autowired
     AuthorRepository repository;
+
+    @Autowired
+    BookRepository bookRepository;
 
     @Test
     public void addTest(){
@@ -61,5 +68,41 @@ public class AuthorRepositoryTest {
     @Test
     public void countTest(){
         System.out.println("Count of authores: " + repository.count());
+    }
+
+    @Test
+    public void addAuthorWithBooksTest(){
+
+        Author author = new Author();
+        author.setName("Juca Lima da Silva");
+        author.setNationality("Portugal");
+        author.setDateBirthday(LocalDate.of(1985, 2, 3));
+
+        Book book = new Book();
+        book.setIsbn("78965-58746");
+        book.setGender(BookGender.ROMANCE);
+        book.setPrice(BigDecimal.valueOf(100));
+        book.setTitle("Good Things");
+        book.setDatePublished(LocalDate.of(1855, 1, 3));
+
+        book.setAuthor(author);
+
+        Book book1 = new Book();
+        book1.setIsbn("1236-96325");
+        book1.setGender(BookGender.MYSTERY);
+        book1.setPrice(BigDecimal.valueOf(201));
+        book1.setTitle("Mystery of Heaven");
+        book1.setDatePublished(LocalDate.of(1855, 1, 3));
+
+        book1.setAuthor(author);
+
+        author.setBooks(new ArrayList<>());
+        author.getBooks().add(book1);
+        author.getBooks().add(book);
+
+        repository.save(author);
+        //bookRepository.saveAll(author.getBooks());
+
+
     }
 }
