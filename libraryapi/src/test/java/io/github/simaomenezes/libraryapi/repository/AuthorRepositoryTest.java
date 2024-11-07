@@ -105,4 +105,15 @@ public class AuthorRepositoryTest {
 
 
     }
+
+    @Test
+    public void listBooksOfAuthor(){
+        UUID id = UUID.fromString("74f1c8f5-c254-47d6-8f7a-f998497b951a");
+        var authorFound = repository.findById(id).get();
+
+        List<Book> booksFound = bookRepository.findByAuthor(authorFound);
+        authorFound.setBooks(booksFound);
+
+        authorFound.getBooks().forEach(System.out::println);
+    }
 }

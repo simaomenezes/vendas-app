@@ -13,7 +13,7 @@ import java.util.UUID;
 @Table(name = "author", schema = "public")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"books"})
 public class Author {
     @Id
     @Column(name = "id")

@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -107,5 +108,38 @@ public class BookRepositoryTest {
 
         //System.out.println("Author:");
         //System.out.println(":::: - " + bookFound.getAuthor().getName());
+    }
+
+
+
+    @Test
+    public void findByTitle(){
+        var title = "War Of Read";
+        List<Book> booksFound = repository.findByTitle(title);
+        booksFound.forEach(System.out::println);
+    }
+
+    @Test
+    public void findByIsbn(){
+        var isbn = "";
+        List<Book> booksFound = repository.findByIsbn(isbn);
+        booksFound.forEach(System.out::println);
+
+    }
+
+    @Test
+    public void findByTitleAndPrice(){
+        var title = "Mystery of Heaven";
+        var price = BigDecimal.valueOf(201.00);
+        List<Book> booksFound = repository.findByTitleAndPrice(title, price);
+        booksFound.forEach(System.out::println);
+    }
+
+    @Test
+    public void findByTitleOrIsbn(){
+        var title = "WE PO";
+        var isbn = "98598-51654";
+        List<Book> booksFound = repository.findByTitleOrIsbn(title, isbn);
+        booksFound.forEach(System.out::println);
     }
 }
