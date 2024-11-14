@@ -3,8 +3,10 @@ package io.github.simaomenezes.libraryapi.controller.dto;
 import io.github.simaomenezes.libraryapi.model.Author;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record AuthorDTO(
+        UUID id,
         String name,
         LocalDate dateBirthday,
         String nationality) {
