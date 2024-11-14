@@ -139,7 +139,7 @@ public class BookRepositoryTest {
     public void findByTitleOrIsbn(){
         var title = "WE PO";
         var isbn = "98598-51654";
-        List<Book> booksFound = repository.findByTitleOrIsbn(title, isbn);
+        List<Book> booksFound = repository.findByTitleOrIsbnOrderByTitle(title, isbn);
         booksFound.forEach(System.out::println);
     }
 }
