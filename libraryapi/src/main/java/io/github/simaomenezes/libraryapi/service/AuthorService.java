@@ -21,6 +21,13 @@ public class AuthorService {
         return repository.save(author);
     }
 
+    public void update(Author author){
+        if(author.getId() == null){
+            throw new IllegalArgumentException("The to save, the author need on saved the bd data");
+        }
+        repository.saveAndFlush(author);
+    }
+
     public Optional<Author> findById(UUID id){
         return repository.findById(id);
     }
