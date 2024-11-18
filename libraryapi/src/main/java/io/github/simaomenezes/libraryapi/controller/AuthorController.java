@@ -1,6 +1,8 @@
 package io.github.simaomenezes.libraryapi.controller;
 
 import io.github.simaomenezes.libraryapi.controller.dto.AuthorDTO;
+import io.github.simaomenezes.libraryapi.controller.error.ErrorResponse;
+import io.github.simaomenezes.libraryapi.exceptions.RecordDuplicatedException;
 import io.github.simaomenezes.libraryapi.model.Author;
 import io.github.simaomenezes.libraryapi.service.AuthorService;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +25,22 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> add(@RequestBody AuthorDTO authorDTO){
-        Author author = authorDTO.mapperToAuthor();
-        service.add(author);
+    public ResponseEntity<Object> add(@RequestBody AuthorDTO authorDTO){
+        try {
+            Author author = authorDTO.mapperToAuthor();
+            service.add(author);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(author.getId())
-                .toUri();
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(author.getId())
+                    .toUri();
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).build();
+        } catch (RecordDuplicatedException e) {
+            var errorDTO = ErrorResponse.responseConflict(e.getMessage());
+            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
+        }
     }
 
     @GetMapping("{id}")
@@ -80,20 +87,25 @@ public class AuthorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody AuthorDTO authorDTO){
-        UUID idAuthor = UUID.fromString(id);
-        Optional<Author> authorFound = service.findById(idAuthor);
-        if(authorFound.isEmpty()){
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Object> update(@PathVariable("id") String id, @RequestBody AuthorDTO authorDTO){
+        try {
+            UUID idAuthor = UUID.fromString(id);
+            Optional<Author> authorFound = service.findById(idAuthor);
+            if(authorFound.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+            Author author = authorFound.get();
+
+            author.setName(authorDTO.name());
+            author.setNationality(authorDTO.nationality());
+            author.setDateBirthday(authorDTO.dateBirthday());
+
+            service.update(author);
+
+            return ResponseEntity.noContent().build();
+        } catch (RecordDuplicatedException e) {
+            var errorDTO = ErrorResponse.responseConflict(e.getMessage());
+            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
         }
-        Author author = authorFound.get();
-
-        author.setName(authorDTO.name());
-        author.setNationality(authorDTO.nationality());
-        author.setDateBirthday(authorDTO.dateBirthday());
-
-        service.update(author);
-
-        return ResponseEntity.noContent().build();
     }
 }
