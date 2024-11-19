@@ -18,7 +18,10 @@ public class AuthorService {
     private final AuthorValidator validator;
     private final BookRepository bookRepository;
 
-    public AuthorService(AuthorRepository repository, AuthorValidator validator, BookRepository bookRepository) {
+    public AuthorService(
+            AuthorRepository repository,
+            AuthorValidator validator,
+            BookRepository bookRepository) {
         this.repository = repository;
         this.validator = validator;
         this.bookRepository = bookRepository;

@@ -5,6 +5,8 @@ import io.github.simaomenezes.libraryapi.controller.error.ErrorResponse;
 import io.github.simaomenezes.libraryapi.exceptions.RecordDuplicatedException;
 import io.github.simaomenezes.libraryapi.model.Author;
 import io.github.simaomenezes.libraryapi.service.AuthorService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,15 +19,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("authors")
+@RequiredArgsConstructor
 public class AuthorController {
     private final AuthorService service;
 
-    public AuthorController(AuthorService service){
-        this.service = service;
-    }
-
     @PostMapping
-    public ResponseEntity<Object> add(@RequestBody AuthorDTO authorDTO){
+    public ResponseEntity<Object> add(@RequestBody @Valid AuthorDTO authorDTO){
         try {
             Author author = authorDTO.mapperToAuthor();
             service.add(author);
@@ -87,7 +86,7 @@ public class AuthorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> update(@PathVariable("id") String id, @RequestBody AuthorDTO authorDTO){
+    public ResponseEntity<Object> update(@PathVariable("id") String id, @RequestBody @Valid AuthorDTO authorDTO){
         try {
             UUID idAuthor = UUID.fromString(id);
             Optional<Author> authorFound = service.findById(idAuthor);
