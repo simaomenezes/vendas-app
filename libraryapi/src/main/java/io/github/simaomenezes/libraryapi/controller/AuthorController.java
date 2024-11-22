@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("authors")
 @RequiredArgsConstructor
-public class AuthorController {
+public class AuthorController implements GenericController {
     private final AuthorService service;
     private final AuthorMapper authorMapper;
 
@@ -30,13 +29,7 @@ public class AuthorController {
         try {
             Author author = authorMapper.toEntity(authorDTO);
             service.add(author);
-
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(author.getId())
-                    .toUri();
-
+            URI location = generatorHeaderLocation(author.getId());
             return ResponseEntity.created(location).build();
         } catch (RecordDuplicatedException e) {
             var errorDTO = ErrorResponse.responseConflict(e.getMessage());
@@ -72,25 +65,17 @@ public class AuthorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> update(@PathVariable("id") String id, @RequestBody @Valid AuthorDTO authorDTO){
-        try {
-            UUID idAuthor = UUID.fromString(id);
-            Optional<Author> authorFound = service.findById(idAuthor);
-            if(authorFound.isEmpty()){
-                return ResponseEntity.notFound().build();
-            }
-            Author author = authorFound.get();
-
-            author.setName(authorDTO.name());
-            author.setNationality(authorDTO.nationality());
-            author.setDateBirthday(authorDTO.dateBirthday());
-
-            service.update(author);
-
-            return ResponseEntity.noContent().build();
-        } catch (RecordDuplicatedException e) {
-            var errorDTO = ErrorResponse.responseConflict(e.getMessage());
-            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
+    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody @Valid AuthorDTO authorDTO){
+        UUID idAuthor = UUID.fromString(id);
+        Optional<Author> authorFound = service.findById(idAuthor);
+        if(authorFound.isEmpty()){
+            return ResponseEntity.notFound().build();
         }
+        Author author = authorFound.get();
+        author.setName(authorDTO.name());
+        author.setNationality(authorDTO.nationality());
+        author.setDateBirthday(authorDTO.dateBirthday());
+        service.update(author);
+        return ResponseEntity.noContent().build();
     }
 }
