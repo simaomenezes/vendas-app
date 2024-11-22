@@ -11,25 +11,14 @@ import java.util.UUID;
 
 public record AuthorDTO(
         UUID id,
-
         @NotBlank(message = "Field required")
         @Size(min = 2, max = 100, message = "field with size character invalid")
         String name,
-
         @NotNull(message = "Field required")
         @Past(message = "Don't be future date")
         LocalDate dateBirthday,
-
         @NotBlank(message = "Field required")
         @Size(min = 2, max = 50, message = "field with size character invalid")
-        String nationality) {
-
-    public Author mapperToAuthor(){
-        Author author = new Author();
-        author.setName(this.name);
-        author.setDateBirthday(this.dateBirthday);
-        author.setNationality(this.nationality);
-
-        return author;
-    }
+        String nationality
+) {
 }

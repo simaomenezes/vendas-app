@@ -2,6 +2,7 @@ package io.github.simaomenezes.libraryapi.controller;
 
 import io.github.simaomenezes.libraryapi.controller.dto.AuthorDTO;
 import io.github.simaomenezes.libraryapi.controller.error.ErrorResponse;
+import io.github.simaomenezes.libraryapi.controller.mappers.AuthorMapper;
 import io.github.simaomenezes.libraryapi.exceptions.RecordDuplicatedException;
 import io.github.simaomenezes.libraryapi.model.Author;
 import io.github.simaomenezes.libraryapi.service.AuthorService;
@@ -22,11 +23,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthorController {
     private final AuthorService service;
+    private final AuthorMapper authorMapper;
 
     @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid AuthorDTO authorDTO){
         try {
-            Author author = authorDTO.mapperToAuthor();
+            Author author = authorMapper.toEntity(authorDTO);
             service.add(author);
 
             URI location = ServletUriComponentsBuilder
@@ -45,17 +47,10 @@ public class AuthorController {
     @GetMapping("{id}")
     public ResponseEntity<AuthorDTO> getDetail(@PathVariable("id") String id){
         var idAuthor = UUID.fromString(id);
-        Optional<Author> authorOptional = service.findById(idAuthor);
-        if(authorOptional.isPresent()){
-            Author author = authorOptional.get();
-            AuthorDTO authorDTO = new AuthorDTO(
-                    author.getId(),
-                    author.getName(),
-                    author.getDateBirthday(),
-                    author.getNationality());
+        return service.findById(idAuthor).map(author -> {
+            AuthorDTO authorDTO = authorMapper.toDTO(author);
             return ResponseEntity.ok(authorDTO);
-        }
-        return ResponseEntity.notFound().build();
+        }).orElseGet(()-> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("{id}")
@@ -72,16 +67,7 @@ public class AuthorController {
     @GetMapping("search")
     public ResponseEntity<List<AuthorDTO>> search(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "nationality", required = false) String nationality){
         List<Author> authors = service.search(name, nationality);
-
-        List<AuthorDTO> authorDTOList = authors
-                .stream()
-                .map(author -> new AuthorDTO(
-                        author.getId(),
-                        author.getName(),
-                        author.getDateBirthday(),
-                        author.getNationality()
-                )).collect(Collectors.toList());
-
+        List<AuthorDTO> authorDTOList = authors.stream().map(authorMapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok(authorDTOList);
     }
 
