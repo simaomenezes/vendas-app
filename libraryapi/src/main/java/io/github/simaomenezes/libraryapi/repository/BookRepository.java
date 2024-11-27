@@ -5,6 +5,8 @@ import io.github.simaomenezes.libraryapi.model.Book;
 import io.github.simaomenezes.libraryapi.model.BookGender;
 import jakarta.transaction.Transactional;
 import org.springframework.cglib.core.Local;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -37,7 +39,7 @@ public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificat
      * */
 
     /*1*/
-    List<Book> findByAuthor(Author author);
+    Page<Book> findByAuthor(Author author, Pageable pageable);
 
     /*2*/
     List<Book> findByTitle(String title);

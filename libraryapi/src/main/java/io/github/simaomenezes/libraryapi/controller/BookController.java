@@ -10,6 +10,7 @@ import io.github.simaomenezes.libraryapi.model.BookGender;
 import io.github.simaomenezes.libraryapi.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +52,7 @@ public class BookController implements GenericController{
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseSearchBookDTO>> search(
+    public ResponseEntity<Page<ResponseSearchBookDTO>> search(
             @RequestParam(value = "isbn", required = false)
             String isbn,
             @RequestParam(value = "title", required = false)
@@ -61,13 +62,17 @@ public class BookController implements GenericController{
             @RequestParam(value = "gender", required = false)
             BookGender gender,
             @RequestParam(value = "yearPublished", required = false)
-            Integer yearPublished
+            Integer yearPublished,
+            @RequestParam(value = "page", defaultValue = "0")
+            Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "10")
+            Integer pageSize
     ){
-        var result = service.search(isbn, title, nameAuthor, gender, yearPublished);
-        var list = result.stream()
-                .map(mapper::toDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(list);
+        Page<Book> resultPage = service.search(isbn, title, nameAuthor, gender, yearPublished, page, pageSize);
+        //var list = result.stream().map(mapper::toDTO).collect(Collectors.toList());
+
+        Page<ResponseSearchBookDTO> resulpageDTO = resultPage.map(mapper::toDTO);
+        return ResponseEntity.ok(resulpageDTO);
     }
 
     @PutMapping("{id}")

@@ -5,6 +5,9 @@ import io.github.simaomenezes.libraryapi.model.BookGender;
 import io.github.simaomenezes.libraryapi.repository.BookRepository;
 import io.github.simaomenezes.libraryapi.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -34,12 +37,14 @@ public class BookService {
         repository.delete(book);
     }
 
-    public List<Book> search(
+    public Page<Book> search(
             String isbn,
             String title,
             String nameAuthor,
             BookGender gender,
-            Integer yearPublished){
+            Integer yearPublished,
+            Integer page,
+            Integer pageSize){
         // select * from livro where 0 = 0
         Specification<Book> specs = Specification.where((root, query, cb) -> cb.conjunction() );
 
@@ -63,7 +68,8 @@ public class BookService {
         if(nameAuthor != null){
             specs = specs.and(nameAuthorLike(nameAuthor));
         }
-        return repository.findAll(specs);
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return repository.findAll(specs,pageable);
     }
 
     public void update(Book book){
