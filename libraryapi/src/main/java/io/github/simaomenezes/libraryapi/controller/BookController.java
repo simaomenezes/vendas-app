@@ -1,18 +1,21 @@
 package io.github.simaomenezes.libraryapi.controller;
 
 import io.github.simaomenezes.libraryapi.controller.dto.BookDTO;
+import io.github.simaomenezes.libraryapi.controller.dto.ResponseSearchBookDTO;
 import io.github.simaomenezes.libraryapi.controller.error.ErrorResponse;
 import io.github.simaomenezes.libraryapi.controller.mappers.BookMapper;
 import io.github.simaomenezes.libraryapi.exceptions.RecordDuplicatedException;
 import io.github.simaomenezes.libraryapi.model.Book;
+import io.github.simaomenezes.libraryapi.model.BookGender;
 import io.github.simaomenezes.libraryapi.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("books")
@@ -28,5 +31,59 @@ public class BookController implements GenericController{
         service.add(book);
         var url = generatorHeaderLocation(book.getId());
         return ResponseEntity.created(url).build();
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<ResponseSearchBookDTO> getDateail(@PathVariable("id") String id){
+        return service.getById(UUID.fromString(id)).map(book -> {
+            var dto = mapper.toDTO(book);
+            return ResponseEntity.ok(dto);
+        }).orElseGet(()-> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> delete(@PathVariable("id") String id){
+        return service.getById(UUID.fromString(id))
+                .map(book-> {
+                    service.delete(book);
+                    return ResponseEntity.noContent().build();
+                }).orElseGet(()-> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ResponseSearchBookDTO>> search(
+            @RequestParam(value = "isbn", required = false)
+            String isbn,
+            @RequestParam(value = "title", required = false)
+            String title,
+            @RequestParam(value = "nameAuthor", required = false)
+            String nameAuthor,
+            @RequestParam(value = "gender", required = false)
+            BookGender gender,
+            @RequestParam(value = "yearPublished", required = false)
+            Integer yearPublished
+    ){
+        var result = service.search(isbn, title, nameAuthor, gender, yearPublished);
+        var list = result.stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(list);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Object> update(
+            @PathVariable("id") String id, @RequestBody @Valid BookDTO dto){
+        return service.getById(UUID.fromString(id))
+                .map(book -> {
+                    Book bookAux = mapper.toEntity(dto);
+                    book.setDatePublished(bookAux.getDatePublished());
+                    book.setIsbn(bookAux.getIsbn());
+                    book.setPrice(bookAux.getPrice());
+                    book.setGender(bookAux.getGender());
+                    book.setTitle(bookAux.getTitle());
+                    book.setAuthor(bookAux.getAuthor());
+                    service.update(book);
+                    return ResponseEntity.noContent().build();
+                }).orElseGet( () -> ResponseEntity.notFound().build() );
     }
 }

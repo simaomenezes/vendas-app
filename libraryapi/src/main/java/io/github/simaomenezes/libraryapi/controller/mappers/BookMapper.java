@@ -1,6 +1,7 @@
 package io.github.simaomenezes.libraryapi.controller.mappers;
 
 import io.github.simaomenezes.libraryapi.controller.dto.BookDTO;
+import io.github.simaomenezes.libraryapi.controller.dto.ResponseSearchBookDTO;
 import io.github.simaomenezes.libraryapi.model.Book;
 import io.github.simaomenezes.libraryapi.repository.AuthorRepository;
 import org.mapstruct.Mapper;
@@ -15,4 +16,6 @@ public abstract class BookMapper {
 
     @Mapping(target = "author", expression = "java( authorRepository.findById(dto.idAuthor()).orElse(null) )")
     public abstract Book toEntity(BookDTO dto);
+
+    public abstract ResponseSearchBookDTO toDTO(Book book);
 }
