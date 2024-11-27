@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificationExecutor<Book> {
@@ -42,7 +43,7 @@ public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificat
     List<Book> findByTitle(String title);
 
     /*3*/
-    List<Book> findByIsbn(String isbn);
+    Optional<Book> findByIsbn(String isbn);
 
     /*4*/
     List<Book> findByTitleAndPrice(String title, BigDecimal price);

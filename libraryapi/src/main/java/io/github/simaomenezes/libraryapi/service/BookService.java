@@ -3,6 +3,7 @@ package io.github.simaomenezes.libraryapi.service;
 import io.github.simaomenezes.libraryapi.model.Book;
 import io.github.simaomenezes.libraryapi.model.BookGender;
 import io.github.simaomenezes.libraryapi.repository.BookRepository;
+import io.github.simaomenezes.libraryapi.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,10 @@ import static io.github.simaomenezes.libraryapi.repository.specs.BookSpecs.*;
 public class BookService {
 
     private final BookRepository repository;
+    private final BookValidator validator;
 
     public Book add(Book book){
+        validator.validator(book);
         return repository.save(book);
     }
 
@@ -67,6 +70,7 @@ public class BookService {
         if(book.getId() == null){
             throw new IllegalArgumentException("For the update, the book is need on saved on BD");
         }
+        validator.validator(book);
         repository.save(book);
     }
 }

@@ -2,6 +2,7 @@ package io.github.simaomenezes.libraryapi.controller.common;
 
 import io.github.simaomenezes.libraryapi.controller.error.ErrorField;
 import io.github.simaomenezes.libraryapi.controller.error.ErrorResponse;
+import io.github.simaomenezes.libraryapi.exceptions.FieldInvalidException;
 import io.github.simaomenezes.libraryapi.exceptions.OperationNotAllowException;
 import io.github.simaomenezes.libraryapi.exceptions.RecordDuplicatedException;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,15 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Any Error. Are your need contact with administrator"
                 , List.of());
+    }
+
+    @ExceptionHandler(FieldInvalidException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponse handleFieldInvalidException(FieldInvalidException e){
+        return new ErrorResponse(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "Validation Error",
+                List.of(new ErrorField(e.getField(), e.getMessage())));
     }
 
 }
