@@ -103,4 +103,5 @@ public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificat
 
     boolean existsByAuthor(Author author);
 
+    List<Book> findByAuthor(Author authorFound);
 }
