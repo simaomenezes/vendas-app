@@ -25,7 +25,7 @@ public class AuthorValidator {
 
     private boolean existAuthorSaved(Author author) {
         Optional<Author> authorFound = repository.findByNameAndDateBirthdayAndNationality(author.getName(), author.getDateBirthday(), author.getNationality());
-        if(author.getId() != null){
+        if(author.getId() == null){
             return authorFound.isPresent();
         }
         return !author.getId().equals(authorFound.get().getId()) && authorFound.isPresent();
