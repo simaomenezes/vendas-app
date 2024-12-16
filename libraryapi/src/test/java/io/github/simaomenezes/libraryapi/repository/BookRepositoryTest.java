@@ -122,8 +122,8 @@ public class BookRepositoryTest {
     @Test
     public void findByIsbn(){
         var isbn = "";
-        List<Book> booksFound = repository.findByIsbn(isbn);
-        booksFound.forEach(System.out::println);
+        Optional<Book> booksFound = repository.findByIsbn(isbn);
+        booksFound.stream().forEach(System.out::println);
 
     }
 
