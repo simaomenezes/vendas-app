@@ -2,7 +2,6 @@ package io.github.simaomenezes.libraryapi.controller;
 
 import io.github.simaomenezes.libraryapi.controller.dto.UserDTO;
 import io.github.simaomenezes.libraryapi.controller.mappers.UserMapper;
-import io.github.simaomenezes.libraryapi.model.User;
 import io.github.simaomenezes.libraryapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

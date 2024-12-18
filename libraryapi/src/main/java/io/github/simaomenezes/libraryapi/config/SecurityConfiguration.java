@@ -1,7 +1,10 @@
 package io.github.simaomenezes.libraryapi.config;
 
+import io.github.simaomenezes.libraryapi.security.CustomUserDetailsService;
+import io.github.simaomenezes.libraryapi.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,8 +30,7 @@ public class SecurityConfiguration {
                 })
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/login/**").permitAll();
-                    authorize.requestMatchers("/authors/**").hasRole("ADMIN");
-                    authorize.requestMatchers("/books/**").hasAnyRole("USER","ADMIN");
+                    authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
 
                     authorize.anyRequest().authenticated();
                 })
@@ -41,20 +43,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder){
-        UserDetails userDetails1 = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("123"))
-                .roles("USER")
-                .build();
-
-
-        UserDetails userDetails2 = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("321"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(userDetails1, userDetails2);
+    public UserDetailsService userDetailsService(UserService userService){
+        return new CustomUserDetailsService(userService);
     }
 }
