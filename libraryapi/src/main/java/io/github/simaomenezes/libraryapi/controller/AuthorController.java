@@ -9,6 +9,7 @@ import io.github.simaomenezes.libraryapi.service.AuthorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,6 +26,7 @@ public class AuthorController implements GenericController {
     private final AuthorMapper authorMapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Object> add(@RequestBody @Valid AuthorDTO authorDTO){
         try {
             Author author = authorMapper.toEntity(authorDTO);
@@ -38,6 +40,7 @@ public class AuthorController implements GenericController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<AuthorDTO> getDetail(@PathVariable("id") String id){
         var idAuthor = UUID.fromString(id);
         return service.findById(idAuthor).map(author -> {
@@ -47,6 +50,7 @@ public class AuthorController implements GenericController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Void> delete(@PathVariable("id") String id){
         var idAuthor = UUID.fromString(id);
         Optional<Author> authorOptional = service.findById(idAuthor);
@@ -58,6 +62,7 @@ public class AuthorController implements GenericController {
     }
 
     @GetMapping("search")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public ResponseEntity<List<AuthorDTO>> search(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "nationality", required = false) String nationality){
         List<Author> authors = service.search(name, nationality);
         List<AuthorDTO> authorDTOList = authors.stream().map(authorMapper::toDTO).collect(Collectors.toList());
@@ -65,6 +70,7 @@ public class AuthorController implements GenericController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody @Valid AuthorDTO authorDTO){
         UUID idAuthor = UUID.fromString(id);
         Optional<Author> authorFound = service.findById(idAuthor);
