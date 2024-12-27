@@ -1,6 +1,7 @@
 package io.github.simaomenezes.libraryapi.config;
 
 import io.github.simaomenezes.libraryapi.security.CustomUserDetailsService;
+import io.github.simaomenezes.libraryapi.security.OAuth2LoginSucessHandler;
 import io.github.simaomenezes.libraryapi.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,18 +22,25 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     @Bean
-    public SecurityFilterChain securityFilterChainHttp(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChainHttp(HttpSecurity http, OAuth2LoginSucessHandler oAuth2LoginSucessHandler) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(configured->{
-                    configured.loginPage("/login").permitAll();
+                    configured
+                            .loginPage("/login")
+                            .permitAll();
                 })
                 .authorizeHttpRequests(authorize -> {
+                    authorize.requestMatchers("/auth2/**").permitAll();
                     authorize.requestMatchers("/login/**").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
 
                     authorize.anyRequest().authenticated();
+                })
+                .oauth2Login(auth ->{
+                    auth.loginPage("/login")
+                            .successHandler(oAuth2LoginSucessHandler);
                 })
                 .build();
     }
