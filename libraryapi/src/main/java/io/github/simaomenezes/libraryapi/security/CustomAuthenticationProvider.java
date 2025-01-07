@@ -23,7 +23,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String login = authentication.getName();
         User user = userService.findByLogin(login);
         if(user == null){
-            throw new UsernameNotFoundException("User not exist!.");
+            throw UserNameNotFound();
         }
 
         String passwordWithoutCript = authentication.getCredentials().toString();
@@ -33,7 +33,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if(passwordEqualOK){
             return new CustomAuthentication(user);
         }
-        return null;
+        throw UserNameNotFound();
+    }
+
+    private UsernameNotFoundException UserNameNotFound() {
+        throw new UsernameNotFoundException("User not exist!.");
     }
 
     @Override

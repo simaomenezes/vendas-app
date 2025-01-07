@@ -1,5 +1,6 @@
 package io.github.simaomenezes.libraryapi.controller;
 
+import io.github.simaomenezes.libraryapi.security.CustomAuthentication;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,9 @@ public class LoginController {
     @GetMapping("/")
     @ResponseBody
     public String pageBegin(Authentication authentication){
+        if (authentication instanceof CustomAuthentication customAuthentication){
+            System.out.println(customAuthentication.getName());
+        }
         return "Name: " + authentication.getName() + " roles: " + authentication.getAuthorities();
     }
 }
