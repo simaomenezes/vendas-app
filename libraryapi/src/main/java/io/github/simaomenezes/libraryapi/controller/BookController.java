@@ -56,7 +56,7 @@ public class BookController implements GenericController{
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER') || hasAuthority('SCOPE_MANAGER')")
     public ResponseEntity<Page<ResponseSearchBookDTO>> search(
             @RequestParam(value = "isbn", required = false)
             String isbn,

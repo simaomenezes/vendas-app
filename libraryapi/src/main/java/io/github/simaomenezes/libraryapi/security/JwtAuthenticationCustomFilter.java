@@ -25,6 +25,11 @@ public class JwtAuthenticationCustomFilter extends OncePerRequestFilter {
         if(needConveter(authentication)){
             String login = authentication.getName();
             User user = userService.findByLogin(login);
+
+            if(user != null){
+                authentication = new CustomAuthentication(user);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
             authentication = new CustomAuthentication(user);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

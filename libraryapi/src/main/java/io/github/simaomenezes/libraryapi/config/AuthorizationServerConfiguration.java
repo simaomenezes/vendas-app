@@ -45,7 +45,6 @@ import java.util.UUID;
 @EnableMethodSecurity
 public class AuthorizationServerConfiguration {
 
-
     @Bean
     @Order(1)
     public SecurityFilterChain authServerFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -66,16 +65,20 @@ public class AuthorizationServerConfiguration {
     }
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository(PasswordEncoder encoder){
+    public RegisteredClientRepository registeredClientRepository(PasswordEncoder encoder, ClientSettings clientSettings, TokenSettings tokenSettings){
         RegisteredClient client = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("my-custome")
                 .clientSecret(encoder.encode("123"))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                //.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUri("http://localhost:8080/authorized")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
+                .scope("MANAGER")
+                .clientSettings(clientSettings)
+                .tokenSettings(tokenSettings)
                 .build();
 
         return new InMemoryRegisteredClientRepository(client);
@@ -148,18 +151,19 @@ public class AuthorizationServerConfiguration {
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer(){
         return context -> {
-            CustomAuthentication authentication = context.getPrincipal();
 
-            OAuth2TokenType tokenType = context.getTokenType();
+            if(context.getPrincipal() instanceof CustomAuthentication){
+                CustomAuthentication authentication = context.getPrincipal();
+                OAuth2TokenType tokenType = context.getTokenType();
 
-            if(OAuth2TokenType.ACCESS_TOKEN.equals(tokenType)){
-                List<String> authorities = authentication.getAuthorities().stream().map(auth -> auth.getAuthority()).toList();
-                context
-                        .getClaims()
-                        .claim("authorities", authorities)
-                        .claim("email", authentication.getUser().getEmail());
+                if(OAuth2TokenType.ACCESS_TOKEN.equals(tokenType)){
+                    List<String> authorities = authentication.getAuthorities().stream().map(auth -> auth.getAuthority()).toList();
+                    context
+                            .getClaims()
+                            .claim("authorities", authorities)
+                            .claim("email", authentication.getUser().getEmail());
+                }
             }
-
         };
     }
 }

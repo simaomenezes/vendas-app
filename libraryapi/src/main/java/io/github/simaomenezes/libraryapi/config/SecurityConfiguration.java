@@ -17,6 +17,8 @@ import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -39,7 +41,7 @@ public class SecurityConfiguration {
                 })
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/login/**").permitAll();
-                    authorize.requestMatchers("/users/**").permitAll();
+                    //authorize.requestMatchers("/users/**").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
 
                     authorize.anyRequest().authenticated();
@@ -64,12 +66,24 @@ public class SecurityConfiguration {
     */
 
     //@Bean
-    public UserDetailsService userDetailsService(UserService userService){
-        return new CustomUserDetailsService(userService);
-    }
+    /*
+        public UserDetailsService userDetailsService(UserService userService){
+            return new CustomUserDetailsService(userService);
+        }
+    */
 
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults(){
         return new GrantedAuthorityDefaults("");
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter(){
+        var jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+
+        var converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        return converter;
     }
 }
