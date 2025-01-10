@@ -2,6 +2,7 @@ package io.github.simaomenezes.libraryapi.security;
 
 import io.github.simaomenezes.libraryapi.model.User;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
 @RequiredArgsConstructor
 public class CustomAuthentication implements Authentication {
 

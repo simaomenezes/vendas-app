@@ -19,3 +19,6 @@ security:
         google:
           client-id: ${GOOGLE_CLIENT_ID}
           client-secret: ${GOOGLE_CLIENT_SECRET}
+logging:
+  level:
+    org.springframework.security: trace
