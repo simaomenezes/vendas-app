@@ -5,6 +5,7 @@ import io.github.simaomenezes.libraryapi.controller.error.ErrorResponse;
 import io.github.simaomenezes.libraryapi.exceptions.FieldInvalidException;
 import io.github.simaomenezes.libraryapi.exceptions.OperationNotAllowException;
 import io.github.simaomenezes.libraryapi.exceptions.RecordDuplicatedException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
@@ -17,11 +18,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+        log.error("Validation Error: {} ", e.getMessage());
         List<FieldError> fieldErrors = e.getFieldErrors();
         List<ErrorField> listErrors = fieldErrors
                 .stream()
@@ -67,6 +70,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDeniedException(AccessDeniedException e){
+        log.error("Error: ", e);
         return new ErrorResponse(HttpStatus.FORBIDDEN.value(), "Access Denied.", List.of());
     }
 
