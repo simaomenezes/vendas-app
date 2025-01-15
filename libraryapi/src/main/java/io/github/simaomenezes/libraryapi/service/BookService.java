@@ -2,7 +2,9 @@ package io.github.simaomenezes.libraryapi.service;
 
 import io.github.simaomenezes.libraryapi.model.Book;
 import io.github.simaomenezes.libraryapi.model.BookGender;
+import io.github.simaomenezes.libraryapi.model.User;
 import io.github.simaomenezes.libraryapi.repository.BookRepository;
+import io.github.simaomenezes.libraryapi.security.SecurityService;
 import io.github.simaomenezes.libraryapi.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,8 +25,11 @@ public class BookService {
 
     private final BookRepository repository;
     private final BookValidator validator;
+    private final SecurityService securityService;
 
     public Book add(Book book){
+        User user = securityService.getUserLogin();
+        book.setUser(user);
         validator.validator(book);
         return repository.save(book);
     }
