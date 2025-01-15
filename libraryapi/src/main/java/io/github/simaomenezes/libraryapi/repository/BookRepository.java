@@ -5,7 +5,10 @@ import io.github.simaomenezes.libraryapi.model.Book;
 import io.github.simaomenezes.libraryapi.model.BookGender;
 import jakarta.transaction.Transactional;
 import org.springframework.cglib.core.Local;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,9 +16,10 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-public interface BookRepository extends JpaRepository<Book, UUID> {
+public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificationExecutor<Book> {
 
     // Query Method:
     /*
@@ -35,13 +39,13 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
      * */
 
     /*1*/
-    List<Book> findByAuthor(Author author);
+    Page<Book> findByAuthor(Author author, Pageable pageable);
 
     /*2*/
     List<Book> findByTitle(String title);
 
     /*3*/
-    List<Book> findByIsbn(String isbn);
+    Optional<Book> findByIsbn(String isbn);
 
     /*4*/
     List<Book> findByTitleAndPrice(String title, BigDecimal price);
@@ -97,4 +101,7 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
     @Query(" update Book set datePublished = ?1 ")
     void updateDatePublished(LocalDate newDate);
 
+    boolean existsByAuthor(Author author);
+
+    List<Book> findByAuthor(Author authorFound);
 }
