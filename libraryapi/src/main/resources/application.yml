@@ -22,3 +22,5 @@ spring:
 logging:
   level:
     org.springframework.security: trace
+  springdoc:
+    override-with-generic-response: false
