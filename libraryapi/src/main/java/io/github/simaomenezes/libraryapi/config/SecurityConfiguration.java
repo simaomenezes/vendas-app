@@ -1,6 +1,8 @@
 package io.github.simaomenezes.libraryapi.config;
 
 import io.github.simaomenezes.libraryapi.security.CustomUserDetailsService;
+import io.github.simaomenezes.libraryapi.security.LoginSocialSuccessHandler;
+import io.github.simaomenezes.libraryapi.security.OAuth2LoginSucessHandler;
 import io.github.simaomenezes.libraryapi.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,18 +24,23 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     @Bean
-    public SecurityFilterChain securityFilterChainHttp(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChainHttp(HttpSecurity http, LoginSocialSuccessHandler loginSocialSuccessHandler) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(configured->{
-                    configured.loginPage("/login").permitAll();
+                    configured
+                            .loginPage("/login");
                 })
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/login/**").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/users/**").permitAll();
 
                     authorize.anyRequest().authenticated();
+                })
+                .oauth2Login(auth ->{
+                    auth.loginPage("/login")
+                            .successHandler(loginSocialSuccessHandler);
                 })
                 .build();
     }
@@ -42,8 +50,13 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder(10);
     }
 
-    @Bean
+    //@Bean
     public UserDetailsService userDetailsService(UserService userService){
         return new CustomUserDetailsService(userService);
+    }
+
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return new GrantedAuthorityDefaults("");
     }
 }

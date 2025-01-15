@@ -26,4 +26,7 @@ public class User {
     @Type(ListArrayType.class)
     @Column(name = "roles", columnDefinition = "varchar[]")
     private List<String> roles;
+
+    @Column(name = "email")
+    private String email;
 }
