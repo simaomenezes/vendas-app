@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @RequestMapping("authors")
 @RequiredArgsConstructor
 @Tag(name = "Authors")
+@Slf4j
 public class AuthorController implements GenericController {
     private final AuthorService service;
     private final AuthorMapper authorMapper;
@@ -40,6 +42,7 @@ public class AuthorController implements GenericController {
     })
     public ResponseEntity<Object> add(@RequestBody @Valid AuthorDTO authorDTO){
         try {
+            log.info("Created new Author: {}", authorDTO.name());
             Author author = authorMapper.toEntity(authorDTO);
             service.add(author);
             URI location = generatorHeaderLocation(author.getId());
@@ -74,6 +77,7 @@ public class AuthorController implements GenericController {
             @ApiResponse(responseCode = "400", description = "The Author have a books created.")
     })
     public ResponseEntity<Void> delete(@PathVariable("id") String id){
+        log.info("Delete author of ID: {} ", id);
         var idAuthor = UUID.fromString(id);
         Optional<Author> authorOptional = service.findById(idAuthor);
         if (authorOptional.isEmpty()){
